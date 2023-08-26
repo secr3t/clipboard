@@ -12,7 +12,7 @@
 #include <string.h>
 
 #define LOG_FATAL(...) __android_log_print(ANDROID_LOG_FATAL, \
-    "GOLANG.DESIGN/X/CLIPBOARD", __VA_ARGS__)
+    "github.com/secr3t/CLIPBOARD", __VA_ARGS__)
 
 static jmethodID find_method(JNIEnv *env, jclass clazz, const char *name, const char *sig) {
 	jmethodID m = (*env)->GetMethodID(env, clazz, name, sig);

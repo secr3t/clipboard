@@ -1,7 +1,7 @@
 # gclip-gui
 
 This is a very basic example for verification purpose that demonstrates
-how the [golang.design/x/clipboard](https://golang.design/x/clipboard)
+how the [github.com/secr3t/clipboard](https://github.com/secr3t/clipboard)
 can interact with macOS/Linux/Windows/Android/iOS system clipboard.
 
 The gclip GUI application writes a string to the system clipboard

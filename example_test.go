@@ -13,7 +13,7 @@ import (
 	"fmt"
 	"time"
 
-	"golang.design/x/clipboard"
+	"github.com/secr3t/clipboard"
 )
 
 func ExampleWrite() {

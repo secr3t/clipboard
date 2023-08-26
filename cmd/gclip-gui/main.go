@@ -7,7 +7,7 @@
 //go:build android || ios || linux || darwin || windows
 
 // This is a very basic example for verification purpose that
-// demonstrates how the golang.design/x/clipboard can interact
+// demonstrates how the github.com/secr3t/clipboard can interact
 // with macOS/Linux/Windows/Android/iOS system clipboard.
 //
 // The gclip GUI application writes a string to the system clipboard
@@ -24,16 +24,15 @@
 //
 // - For desktop:
 //
-// 	go build -o gclip-gui
+//	go build -o gclip-gui
 //
 // - For Android:
 //
-// 	gomobile build -v -target=android -o gclip-gui.apk
+//	gomobile build -v -target=android -o gclip-gui.apk
 //
 // - For iOS:
 //
-// 	gomobile build -v -target=ios -bundleid design.golang.gclip-gui.app
-//
+//	gomobile build -v -target=ios -bundleid design.golang.gclip-gui.app
 package main
 
 import (
@@ -45,7 +44,7 @@ import (
 	"sync"
 	"time"
 
-	"golang.design/x/clipboard"
+	"github.com/secr3t/clipboard"
 
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"

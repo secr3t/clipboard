@@ -4,7 +4,7 @@
 from the shell. To install:
 
 ```bash
-$ go install golang.design/x/clipboard/cmd/gclip@latest
+$ go install github.com/secr3t/clipboard/cmd/gclip@latest
 ```
 
 ```bash
