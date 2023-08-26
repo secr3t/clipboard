@@ -73,7 +73,7 @@ func cpy() error {
 	ext := filepath.Ext(*file)
 
 	switch ext {
-	case ".png":
+	case ".jpg":
 		t = clipboard.FmtImage
 	case ".txt":
 		fallthrough
