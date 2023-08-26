@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"image/png"
+	"image/jpeg"
 	"reflect"
 	"runtime"
 	"syscall"
@@ -147,9 +147,9 @@ func readImage() ([]byte, error) {
 			img.SetRGBA(xhat, yhat, color.RGBA{r, g, b, a})
 		}
 	}
-	// always use PNG encoding.
+	// always use jpeg encoding.
 	var buf bytes.Buffer
-	png.Encode(&buf, img)
+	jpeg.Encode(&buf, img)
 	return buf.Bytes(), nil
 }
 
@@ -188,16 +188,16 @@ func readImageDib() ([]byte, error) {
 		binary.Write(buf, binary.BigEndian, *(*byte)(unsafe.Pointer(pMemBlk + uintptr(j))))
 		j++
 	}
-	return bmpToPng(buf)
+	return bmpToJpeg(buf)
 }
 
-func bmpToPng(bmpBuf *bytes.Buffer) (buf []byte, err error) {
+func bmpToJpeg(bmpBuf *bytes.Buffer) (buf []byte, err error) {
 	var f bytes.Buffer
 	original_image, err := bmp.Decode(bmpBuf)
 	if err != nil {
 		return nil, err
 	}
-	err = png.Encode(&f, original_image)
+	err = jpeg.Encode(&f, original_image)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func writeImage(buf []byte) error {
 		return nil
 	}
 
-	img, err := png.Decode(bytes.NewReader(buf))
+	img, err := jpeg.Decode(bytes.NewReader(buf))
 	if err != nil {
 		return fmt.Errorf("input bytes is not PNG encoded: %w", err)
 	}

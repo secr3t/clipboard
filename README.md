@@ -10,7 +10,7 @@ import "golang.design/x/clipboard"
 
 - Cross platform supports: **macOS, Linux (X11), Windows, iOS, and Android**
 - Copy/paste UTF-8 text
-- Copy/paste PNG encoded images (Desktop-only)
+- Copy/paste ~~PNG~~ JPEG encoded images (Desktop-only)
 - Command `gclip` as a demo application
 - Mobile app `gclip-gui` as a demo application
 
