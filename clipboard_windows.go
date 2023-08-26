@@ -149,7 +149,7 @@ func readImage() ([]byte, error) {
 	}
 	// always use jpeg encoding.
 	var buf bytes.Buffer
-	jpeg.Encode(&buf, img)
+	jpeg.Encode(&buf, img, nil)
 	return buf.Bytes(), nil
 }
 
@@ -197,7 +197,7 @@ func bmpToJpeg(bmpBuf *bytes.Buffer) (buf []byte, err error) {
 	if err != nil {
 		return nil, err
 	}
-	err = jpeg.Encode(&f, original_image)
+	err = jpeg.Encode(&f, original_image, nil)
 	if err != nil {
 		return nil, err
 	}
