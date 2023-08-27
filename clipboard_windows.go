@@ -204,6 +204,32 @@ func bmpToJpeg(bmpBuf *bytes.Buffer) (buf []byte, err error) {
 	return f.Bytes(), nil
 }
 
+func writeJpeg(buf []byte) error {
+	file, err := writeTemp(bytes.NewBuffer(buf))
+	if err != nil {
+		return err
+	}
+	cmd := exec.Command("PowerShell", "-Command", "Add-Type", "-AssemblyName",
+		fmt.Sprintf("System.Windows.Forms;[Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile('%s'));", file))
+	b, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("%s: %s", err, string(b))
+	}
+	return nil
+}
+
+func writeTemp(r io.Reader) (string, error) {
+	f, err := ioutil.TempFile("", "")
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+	if _, err := io.Copy(f, r); err != nil {
+		return "", err
+	}
+	return f.Name(), nil
+}
+
 func writeImage(buf []byte) error {
 	r, _, err := emptyClipboard.Call()
 	if r == 0 {
@@ -367,7 +393,7 @@ func write(t Format, buf []byte) (<-chan struct{}, error) {
 		// var param uintptr
 		switch t {
 		case FmtImage:
-			err := writeImage(buf)
+			err := writeJpeg(buf)
 			if err != nil {
 				errch <- err
 				closeClipboard.Call()
