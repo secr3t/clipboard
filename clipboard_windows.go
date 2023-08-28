@@ -295,6 +295,7 @@ func writeImage(buf []byte) error {
 
 	hMem, _, err := gAlloc.Call(gmemMoveable, uintptr(len(buf)))
 	//uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
+	
 	if hMem == 0 {
 		return fmt.Errorf("failed to alloc global memory: %w", err)
 	}
