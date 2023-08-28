@@ -262,13 +262,13 @@ func writeImage(buf []byte) error {
 	//	BI_PNG = 0x0005,
 	// 	BI_CMYK = 0x000B
 	// https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4e588f70-bd92-4a6f-b77f-35d0feaf7a57
-	info.Compression = BI_RGB // BI_BITFIELDS
-	info.RedMask = 0x00FF0000 // default mask
+	info.Compression = BI_BITFIELDS // BI_BITFIELDS
+	// ARGB
+	info.AlphaMask = 0xFF000000
+	info.RedMask = 0x00FF0000
 	info.GreenMask = 0x0000FF00
 	info.BlueMask = 0x000000FF
-	info.AlphaMask = 0xFF000000
 	info.BitCount = 32 // we only deal with 32 bpp at the moment.
-	//info.BitCount = 24 // we only deal with 32 bpp at the moment.
 	// Use calibrated RGB values as Go's image/png assumes linear color space.
 	// Other options:
 	// - LCS_CALIBRATED_RGB = 0x00000000
@@ -276,7 +276,7 @@ func writeImage(buf []byte) error {
 	// - LCS_WINDOWS_COLOR_SPACE = 0x57696E20
 	// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/eb4bbd50-b3ce-4917-895c-be31f214797f
 	//info.CSType = 0x73524742
-	info.CSType = 0x00000000
+	info.CSType = 0x73524742
 	// Use GL_IMAGES for GamutMappingIntent
 	// Other options:
 	// - LCS_GM_ABS_COLORIMETRIC = 0x00000008
@@ -293,22 +293,20 @@ func writeImage(buf []byte) error {
 	//copy(data[:], infob[:])
 	copy(buf[:], infob[:])
 
-	hMem, _, err := gAlloc.Call(gmemMoveable,
-		uintptr(len(buf)*int(unsafe.Sizeof(buf[0]))))
+	hMem, _, err := gAlloc.Call(gmemMoveable, uintptr(len(buf)))
 	//uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
 	if hMem == 0 {
 		return fmt.Errorf("failed to alloc global memory: %w", err)
 	}
+	defer gUnlock.Call(hMem)
 
 	p, _, err := gLock.Call(hMem)
 	if p == 0 {
 		return fmt.Errorf("failed to lock global memory: %w", err)
 	}
-	defer gUnlock.Call(hMem)
 
 	//memMove.Call(p, uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
-
-	memMove.Call(p, uintptr(unsafe.Pointer(&buf[0])), uintptr(len(buf)*int(unsafe.Sizeof(buf[0]))))
+	memMove.Call(p, uintptr(unsafe.Pointer(&buf[0])), uintptr(len(buf)))
 
 	v, _, err := setClipboardData.Call(cFmtDIBV5, hMem)
 	if v == 0 {
