@@ -30,6 +30,16 @@ import (
 	"golang.org/x/image/bmp"
 )
 
+const (
+	BI_RGB       = 0x0000
+	BI_RLE8      = 0x0001
+	BI_RLE4      = 0x0002
+	BI_BITFIELDS = 0x0003
+	BI_JPEG      = 0x0004
+	BI_PNG       = 0x0005
+	BI_CMYK      = 0x000B
+)
+
 func initialize() error { return nil }
 
 // readText reads the clipboard and returns the text data if presents.
@@ -284,7 +294,7 @@ func writeImage(buf []byte) error {
 	copy(buf[:], infob[:])
 
 	hMem, _, err := gAlloc.Call(gmemMoveable,
-		uintptr(len(data)*int(unsafe.Sizeof(buf[0]))))
+		uintptr(len(buf)*int(unsafe.Sizeof(buf[0]))))
 	//uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
 	if hMem == 0 {
 		return fmt.Errorf("failed to alloc global memory: %w", err)
