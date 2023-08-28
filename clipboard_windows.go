@@ -20,9 +20,6 @@ import (
 	"image"
 	"image/color"
 	"image/jpeg"
-	"io"
-	"io/ioutil"
-	"os/exec"
 	"reflect"
 	"runtime"
 	"syscall"
@@ -207,32 +204,6 @@ func bmpToJpeg(bmpBuf *bytes.Buffer) (buf []byte, err error) {
 	return f.Bytes(), nil
 }
 
-func writeJpeg(buf []byte) error {
-	file, err := writeTemp(bytes.NewBuffer(buf))
-	if err != nil {
-		return err
-	}
-	cmd := exec.Command("PowerShell", "-Command", "Add-Type", "-AssemblyName",
-		fmt.Sprintf("System.Windows.Forms;[Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile('%s'));", file))
-	b, err := cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("%s: %s", err, string(b))
-	}
-	return nil
-}
-
-func writeTemp(r io.Reader) (string, error) {
-	f, err := ioutil.TempFile("", "")
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-	if _, err := io.Copy(f, r); err != nil {
-		return "", err
-	}
-	return f.Name(), nil
-}
-
 func writeImage(buf []byte) error {
 	r, _, err := emptyClipboard.Call()
 	if r == 0 {
@@ -285,8 +256,8 @@ func writeImage(buf []byte) error {
 	info.GreenMask = 0xff00
 	info.BlueMask = 0xff
 	info.AlphaMask = 0xff000000
-	//info.BitCount = 32 // we only deal with 32 bpp at the moment.
-	info.BitCount = 24 // we only deal with 32 bpp at the moment.
+	info.BitCount = 32 // we only deal with 32 bpp at the moment.
+	//info.BitCount = 24 // we only deal with 32 bpp at the moment.
 	// Use calibrated RGB values as Go's image/png assumes linear color space.
 	// Other options:
 	// - LCS_CALIBRATED_RGB = 0x00000000
@@ -396,7 +367,7 @@ func write(t Format, buf []byte) (<-chan struct{}, error) {
 		// var param uintptr
 		switch t {
 		case FmtImage:
-			err := writeJpeg(buf)
+			err := writeImage(buf)
 			if err != nil {
 				errch <- err
 				closeClipboard.Call()
@@ -549,6 +520,7 @@ var (
 	// responding to the WM_RENDERFORMAT message, the clipboard owner
 	// must not call OpenClipboard before calling SetClipboardData.)
 	// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclipboarddata
+
 	setClipboardData = user32.MustFindProc("SetClipboardData")
 	// Determines whether the clipboard contains data in the specified format.
 	// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-isclipboardformatavailable
