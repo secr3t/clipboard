@@ -230,9 +230,9 @@ func writeImage(buf []byte) error {
 		for x := 0; x < width; x++ {
 			idx := int(offset) + 4*(y*width+x)
 			r, g, b, a := img.At(x, height-1-y).RGBA()
-			data[idx+2] = uint8(r)
+			data[idx] = uint8(r)
 			data[idx+1] = uint8(g)
-			data[idx+0] = uint8(b)
+			data[idx+2] = uint8(b)
 			data[idx+3] = uint8(a)
 		}
 	}
@@ -250,7 +250,7 @@ func writeImage(buf []byte) error {
 	//	BI_JPEG = 0x0004,
 	//	BI_PNG = 0x0005,
 	// https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4e588f70-bd92-4a6f-b77f-35d0feaf7a57
-	info.Compression = 0x0003 // BI_BITFIELDS
+	info.Compression = 0x0004 // BI_BITFIELDS
 	info.SizeImage = uint32(4 * info.Width * info.Height)
 	info.RedMask = 0x00FF0000 // default mask
 	info.GreenMask = 0x0000FF00
