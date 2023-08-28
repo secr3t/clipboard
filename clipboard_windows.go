@@ -252,10 +252,10 @@ func writeImage(buf []byte) error {
 	// https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4e588f70-bd92-4a6f-b77f-35d0feaf7a57
 	info.Compression = 0x0003 // BI_BITFIELDS
 	info.SizeImage = uint32(4 * info.Width * info.Height)
-	info.RedMask = 0x00ff // default mask
-	info.GreenMask = 0x0000ff
-	info.BlueMask = 0x000000ff
-	info.AlphaMask = 0xff
+	info.RedMask = 0x00FF0000 // default mask
+	info.GreenMask = 0x0000FF00
+	info.BlueMask = 0x000000FF
+	info.AlphaMask = 0xFF000000
 	info.BitCount = 32 // we only deal with 32 bpp at the moment.
 	//info.BitCount = 24 // we only deal with 32 bpp at the moment.
 	// Use calibrated RGB values as Go's image/png assumes linear color space.
@@ -264,7 +264,8 @@ func writeImage(buf []byte) error {
 	// - LCS_sRGB = 0x73524742
 	// - LCS_WINDOWS_COLOR_SPACE = 0x57696E20
 	// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/eb4bbd50-b3ce-4917-895c-be31f214797f
-	info.CSType = 0x73524742
+	//info.CSType = 0x73524742
+	info.CSType = 0x00000000
 	// Use GL_IMAGES for GamutMappingIntent
 	// Other options:
 	// - LCS_GM_ABS_COLORIMETRIC = 0x00000008
