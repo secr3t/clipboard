@@ -251,6 +251,7 @@ func writeImage(buf []byte) error {
 	info.Size = uint32(offset)
 	info.Width = int32(width)
 	info.Height = int32(height)
+	info.SizeImage = uint32(imageSize)
 	info.Planes = 1
 	//info.Compression = 0 // BI_RGB
 	//	BI_RGB = 0x0000,
@@ -262,7 +263,6 @@ func writeImage(buf []byte) error {
 	// 	BI_CMYK = 0x000B
 	// https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4e588f70-bd92-4a6f-b77f-35d0feaf7a57
 	info.Compression = BI_RGB // BI_BITFIELDS
-	info.SizeImage = uint32(4 * info.Width * info.Height)
 	info.RedMask = 0x00FF0000 // default mask
 	info.GreenMask = 0x0000FF00
 	info.BlueMask = 0x000000FF
