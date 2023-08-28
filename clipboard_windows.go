@@ -225,17 +225,17 @@ func writeImage(buf []byte) error {
 	height := img.Bounds().Dy()
 	imageSize := 4 * width * height
 
-	data := make([]byte, int(offset)+imageSize)
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
-			idx := int(offset) + 4*(y*width+x)
-			r, g, b, a := img.At(x, height-1-y).RGBA()
-			data[idx] = uint8(r)
-			data[idx+1] = uint8(g)
-			data[idx+2] = uint8(b)
-			data[idx+3] = uint8(a)
-		}
-	}
+	//data := make([]byte, int(offset)+imageSize)
+	//for y := 0; y < height; y++ {
+	//	for x := 0; x < width; x++ {
+	//		idx := int(offset) + 4*(y*width+x)
+	//		r, g, b, a := img.At(x, height-1-y).RGBA()
+	//		data[idx] = uint8(r)
+	//		data[idx+1] = uint8(g)
+	//		data[idx+2] = uint8(b)
+	//		data[idx+3] = uint8(a)
+	//	}
+	//}
 
 	info := bitmapV5Header{}
 	info.Size = uint32(offset)
@@ -251,7 +251,7 @@ func writeImage(buf []byte) error {
 	//	BI_PNG = 0x0005,
 	// 	BI_CMYK = 0x000B
 	// https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4e588f70-bd92-4a6f-b77f-35d0feaf7a57
-	info.Compression = 0x0004 // BI_BITFIELDS
+	info.Compression = BI_RGB // BI_BITFIELDS
 	info.SizeImage = uint32(4 * info.Width * info.Height)
 	info.RedMask = 0x00FF0000 // default mask
 	info.GreenMask = 0x0000FF00
@@ -280,10 +280,12 @@ func writeImage(buf []byte) error {
 	for i, v := range *(*[unsafe.Sizeof(info)]byte)(unsafe.Pointer(&info)) {
 		infob[i] = v
 	}
-	copy(data[:], infob[:])
+	//copy(data[:], infob[:])
+	copy(buf[:], infob[:])
 
 	hMem, _, err := gAlloc.Call(gmemMoveable,
-		uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
+		uintptr(len(data)*int(unsafe.Sizeof(buf[0]))))
+	//uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
 	if hMem == 0 {
 		return fmt.Errorf("failed to alloc global memory: %w", err)
 	}
@@ -294,8 +296,9 @@ func writeImage(buf []byte) error {
 	}
 	defer gUnlock.Call(hMem)
 
-	memMove.Call(p, uintptr(unsafe.Pointer(&data[0])),
-		uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
+	//memMove.Call(p, uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)*int(unsafe.Sizeof(data[0]))))
+
+	memMove.Call(p, uintptr(unsafe.Pointer(&buf[0])), uintptr(len(buf)*int(unsafe.Sizeof(buf[0]))))
 
 	v, _, err := setClipboardData.Call(cFmtDIBV5, hMem)
 	if v == 0 {
