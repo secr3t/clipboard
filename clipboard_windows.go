@@ -249,6 +249,7 @@ func writeImage(buf []byte) error {
 	//	BI_BITFIELDS = 0x0003,
 	//	BI_JPEG = 0x0004,
 	//	BI_PNG = 0x0005,
+	// 	BI_CMYK = 0x000B
 	// https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4e588f70-bd92-4a6f-b77f-35d0feaf7a57
 	info.Compression = 0x0004 // BI_BITFIELDS
 	info.SizeImage = uint32(4 * info.Width * info.Height)
