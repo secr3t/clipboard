@@ -250,12 +250,12 @@ func writeImage(buf []byte) error {
 	//	BI_JPEG = 0x0004,
 	//	BI_PNG = 0x0005,
 	// https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4e588f70-bd92-4a6f-b77f-35d0feaf7a57
-	info.Compression = 0x0004 // BI_JPEG
+	info.Compression = 0x0003 // BI_BITFIELDS
 	info.SizeImage = uint32(4 * info.Width * info.Height)
-	info.RedMask = 0xff0000 // default mask
-	info.GreenMask = 0xff00
-	info.BlueMask = 0xff
-	info.AlphaMask = 0xff000000
+	info.RedMask = 0x00ff // default mask
+	info.GreenMask = 0x0000ff
+	info.BlueMask = 0x000000ff
+	info.AlphaMask = 0xff
 	info.BitCount = 32 // we only deal with 32 bpp at the moment.
 	//info.BitCount = 24 // we only deal with 32 bpp at the moment.
 	// Use calibrated RGB values as Go's image/png assumes linear color space.
